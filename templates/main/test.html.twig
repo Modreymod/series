@@ -1,33 +1,54 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    <h1> Test !</h1>
+{% extends 'base.html.twig' %}
+{% block body %}
+<h1> Test !</h1>
 
-    {# création de varible #}
-    {% set name = "Audrey" %}
-    {# ~~ symbole de concatenation #}
-    <h2>Hello {{ name ~" "~ name }} !</h2>
-    <h2>Hello {{ name }} {{  name }} !</h2>
+{# création de varible #}
+{% set name = "Audrey" %}
+{# ~~ symbole de concatenation #}
+<h2>Hello {{ name ~" "~ name }} !</h2>
+<h2>Hello {{ name }} {{ name }} !</h2>
 
-    {# création de varible de tableau #}
-    {% set colors = ['red','purple','green','yellow'] %}
+{# création de varible de tableau #}
+{% set colors = ['red','purple','green','yellow'] %}
 
-    {# boucler sur le tableau #}
-    {% for color in colors %}
+{# boucler sur le tableau #}
+{% for color in colors %}
     <div style="background-color: {{ color }}">{{ color }}</div>
-    {% endfor %}
+    {# usage de loop variable créée par for #}
+    {% if loop.first %}
+        <div>Première Itération</div>
+    {% endif %}
 
+    {# index de l'élément #}
+    <div>index de l'élément courant : {{ loop.index }} / {{ loop.length }}</div>
 
+    {% if loop.last %}
+        <div>Dernière Itération</div>
+    {% endif %}
+    {# si tableau est vide alors on passe au else #}
+{% else %}
+    <div>Pas d'élément</div>
+{% endfor %}
 
+{# Manipulation d'objet #}
+{% set serie = {
+    title : "LOTR",
+    year : 2022,
+    plateform : "Amazon"
+} %}
 
+<h2>Titre de la série : {{ serie.title }}</h2>
 
+{% for key, val in serie %}
+    <div>{{ key }} : {{ val }}</div>
+{% endfor %}
 
-</body>
-</html>
+{# Les filtres #}
+<div>{{ name | upper }} : {{  name | length }} lettres</div>
+<div>{{ name | upper | lower | capitalize }} : {{  name | length }} lettres</div>
+<div>{{ colors | join("-")}}</div>
+{# fonctionne que sur now ou un objet date#}
+<div>{{ "now" | date('Y-m-d')}}</div>
+
+{% endblock %}
+{% block title%} {{ parent() }} | Test {% endblock %}
