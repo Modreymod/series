@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/serie', name: 'serie_')]
 class SerieController extends AbstractController
 {
-    #[Route('/list', name: 'list')]
+    #[Route('/list', name: 'list', methods: 'GET')]
     public function list(): Response
     {
         //TODO Récupérer la liste des séries en BDD
