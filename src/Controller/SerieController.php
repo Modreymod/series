@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Serie;
+use App\Form\SerieType;
 use App\Repository\SerieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -51,10 +53,43 @@ class SerieController extends AbstractController
     }
 
     #[Route('/add', name: 'add')]
-    public function add(SerieRepository $serieRepository, EntityManagerInterface $entityManager): Response
+    public function add(SerieRepository $serieRepository, Request $request): Response
     {
         $serie = new Serie();
-//Settage des infos de la série
+        //Création d'une instance de form lié à une instance de série
+        $serieForm = $this->createForm(SerieType::class,$serie);
+        //méthode qui extrait les éléments du formulaire de la requete et les met dans la variable serie
+        //il fournit l'objet hydraté
+        $serieForm->handleRequest($request);
+
+
+
+        if($serieForm->isSubmitted()){
+            //set manuellement la date du jour
+           // $serie->setDateCreated(new \DateTime());
+
+            //rentre en bdd la nouvelle serie
+            $serieRepository->save($serie, true);
+
+            //affichage message qui se supprime automatiquement
+            $this->addFlash('success',"Serie added !");
+
+            //redirige vers la page de détail de la serie
+            return $this->redirectToRoute('serie_show',['id'=>$serie->getId()]);
+        }
+
+
+
+        dump($serie);
+
+        //TODO Créer formulaire d'ajout de serie
+        return $this->render('serie/add.html.twig',
+            ['serieForm'=>$serieForm->createView()]);
+
+    }
+
+}
+/*Settage des infos de la série
         $serie
             ->setName("le magicien")
             ->setBackdrop("backdrop.png")
@@ -72,20 +107,13 @@ class SerieController extends AbstractController
         $entityManager->persist($serie);
         // $entityManager->persist($serie2);
         $entityManager->flush();
-        /* dump($serie);
+         dump($serie);
 //enregistrement en BDD
         $serieRepository->save($serie, true);
 
         dump($serie);
         $serie->setName("The last of us");
         $serieRepository->save($serie, true);
-        dump($serie);*/
+        dump($serie);
 
-        $serieRepository->remove($serie, true);
-
-        //TODO Créer formulaire d'ajout de serie
-        return $this->render('serie/add.html.twig');
-
-    }
-
-}
+        $serieRepository->remove($serie, true);*/
