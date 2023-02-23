@@ -19,10 +19,20 @@ class SerieController extends AbstractController
         //TODO Récupérer la liste des séries en BDD
         //$series = $serieRepository->findAll();
 
+
+
+        //méthode magique qui est créée dynamiquement en fonction des attributs de l'entité assoccié
+        //$series = $serieRepository->findByStatus("ended");
+        //dump($series);
+        //return $this->render('serie/list.html.twig', ['series' => $series],);
+
         //Selectionne les comedy finies avec un tableau de clause WHERE
-        $series = $serieRepository->findBy([],["vote"=>'DESC'],50);
+        //$series = $serieRepository->findBy([],["vote"=>'DESC'],50);
+
+        $series = $serieRepository->findBestSeries();
         dump($series);
         return $this->render('serie/list.html.twig', ['series' => $series]);
+
 
     }
 
@@ -30,7 +40,11 @@ class SerieController extends AbstractController
     public function show(int $id,SerieRepository $serieRepository): Response
     {
         $serie = $serieRepository->find($id);
-        dump($serie);
+//lance erreur 404 si serie n'existe pas
+        if(!$serie){
+            throw $this->createNotFoundException("Oops ! Serie not found !");
+        }
+
         //TODO récupération des infos de serie
         return $this->render( 'serie/show.html.twig',['serie'=>$serie]);
 
