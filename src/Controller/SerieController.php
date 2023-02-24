@@ -56,6 +56,7 @@ class SerieController extends AbstractController
     public function add(SerieRepository $serieRepository, Request $request): Response
     {
         $serie = new Serie();
+
         //Création d'une instance de form lié à une instance de série
         $serieForm = $this->createForm(SerieType::class,$serie);
         //méthode qui extrait les éléments du formulaire de la requete et les met dans la variable serie
@@ -64,7 +65,7 @@ class SerieController extends AbstractController
 
 
 
-        if($serieForm->isSubmitted()){
+        if($serieForm->isSubmitted() && $serieForm->isValid()){
             //set manuellement la date du jour
            // $serie->setDateCreated(new \DateTime());
 
