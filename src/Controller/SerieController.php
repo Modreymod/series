@@ -15,12 +15,11 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/serie', name: 'serie_')]
 class SerieController extends AbstractController
 {
-    #[Route('/list', name: 'list', methods: 'GET')]
-    public function list(SerieRepository $serieRepository): Response
+    #[Route('/list/{page}', name: 'list', requirements: ['page' => '\d+'], methods: 'GET')]
+    public function list(SerieRepository $serieRepository, int $page = 1): Response
     {
         //TODO Récupérer la liste des séries en BDD
         //$series = $serieRepository->findAll();
-
 
 
         //méthode magique qui est créée dynamiquement en fonction des attributs de l'entité assoccié
@@ -31,24 +30,31 @@ class SerieController extends AbstractController
         //Selectionne les comedy finies avec un tableau de clause WHERE
         //$series = $serieRepository->findBy([],["vote"=>'DESC'],50);
 
-        $series = $serieRepository->findBestSeries();
+        //recup nbr de series dans ma table
+        $nbSerieMax = $serieRepository->count([]);
+        $maxPage = ceil($nbSerieMax/SerieRepository::SERIE_LIMIT);
+        if ($page >= 1 && $page <= $maxPage) {
+            $series = $serieRepository->findBestSeries($page);
+        } else {
+            throw $this->createNotFoundException("Oops ! Page not found !");
+        }
         dump($series);
-        return $this->render('serie/list.html.twig', ['series' => $series]);
+        return $this->render('serie/list.html.twig', ['series' => $series, 'currentPage' => $page, 'maxPage' => $maxPage]);
 
 
     }
 
     #[Route('/{id}', name: 'show', requirements: ['id' => '\d+'])]
-    public function show(int $id,SerieRepository $serieRepository): Response
+    public function show(int $id, SerieRepository $serieRepository): Response
     {
         $serie = $serieRepository->find($id);
 //lance erreur 404 si serie n'existe pas
-        if(!$serie){
+        if (!$serie) {
             throw $this->createNotFoundException("Oops ! Serie not found !");
         }
 
         //TODO récupération des infos de serie
-        return $this->render( 'serie/show.html.twig',['serie'=>$serie]);
+        return $this->render('serie/show.html.twig', ['serie' => $serie]);
 
     }
 
@@ -58,34 +64,32 @@ class SerieController extends AbstractController
         $serie = new Serie();
 
         //Création d'une instance de form lié à une instance de série
-        $serieForm = $this->createForm(SerieType::class,$serie);
+        $serieForm = $this->createForm(SerieType::class, $serie);
         //méthode qui extrait les éléments du formulaire de la requete et les met dans la variable serie
         //il fournit l'objet hydraté
         $serieForm->handleRequest($request);
 
 
-
-        if($serieForm->isSubmitted() && $serieForm->isValid()){
+        if ($serieForm->isSubmitted() && $serieForm->isValid()) {
             //set manuellement la date du jour
-           // $serie->setDateCreated(new \DateTime());
+            // $serie->setDateCreated(new \DateTime());
 
             //rentre en bdd la nouvelle serie
             $serieRepository->save($serie, true);
 
             //affichage message qui se supprime automatiquement
-            $this->addFlash('success',"Serie added !");
+            $this->addFlash('success', "Serie added !");
 
             //redirige vers la page de détail de la serie
-            return $this->redirectToRoute('serie_show',['id'=>$serie->getId()]);
+            return $this->redirectToRoute('serie_show', ['id' => $serie->getId()]);
         }
-
 
 
         dump($serie);
 
         //TODO Créer formulaire d'ajout de serie
         return $this->render('serie/add.html.twig',
-            ['serieForm'=>$serieForm->createView()]);
+            ['serieForm' => $serieForm->createView()]);
 
     }
 

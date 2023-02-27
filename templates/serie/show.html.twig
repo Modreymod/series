@@ -13,6 +13,19 @@
             <div>Serie status : {{ serie.status }}</div>
             <div>Aired from : {{ serie.firstAirDate | date('Y-m-d') }} to {{ serie.lastAirDate | date('Y-m-d') }}</div>
             <div>{{ serie.overview | nl2br }}</div>
+            <section class="seasons">
+                <h3>Seasons !</h3>
+                {% for season in serie.seasons %}
+                    <article>
+                        <img src="{{ asset('img/posters/seasons/' ~ season.poster) }}"
+                             alt="{{ serie.name }} season {{ season.number }}">
+                        <div>
+                            <h4>Season #{{ season.number }}</h4>
+                            <div>{{ season.overview }}</div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </section>
 
         </div>
     </div>
@@ -24,9 +37,9 @@
 
 {% block styleCss %}
     <style>
-        body{
-            background-image: linear-gradient(60deg,rgba(0,0,0,0.6), rgba(0,0,0,0.3)),
-                    url("{{ asset('img/backdrops/'~serie.backdrop) }}");
+        body {
+            background-image: linear-gradient(60deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3)),
+            url("{{ asset('img/backdrops/'~serie.backdrop) }}");
         }</style>
 {% endblock %}
 
