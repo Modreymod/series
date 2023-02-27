@@ -6,10 +6,13 @@ use App\Entity\Serie;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SerieType extends AbstractType
 {
@@ -24,9 +27,9 @@ class SerieType extends AbstractType
     ]
             ])
             ->add('status', ChoiceType::class, ['choices' => [
-                "Canceled" => "Canceled",
-                "Ended" => "Ended",
-                "Returning" => "Returning"
+                "Canceled" => "canceled",
+                "Ended" => "ended",
+                "Returning" => "returning"
 
             ],
                 'multiple' => false,
@@ -51,7 +54,14 @@ class SerieType extends AbstractType
                 'widget'=>'single_text'
             ])
             ->add('backdrop')
-            ->add('poster')
+            ->add('poster', FileType::class, [
+                //ajouter champs dans dans formulaire qui ne sont pas dans l'entité
+                'mapped' =>false,
+                'constraints' =>[
+                    new MimeTypes()
+                ]
+
+            ])
             ->add('tmdbId');
     }
 

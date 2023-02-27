@@ -7,6 +7,7 @@ use App\Form\SerieType;
 use App\Repository\SerieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -73,6 +74,21 @@ class SerieController extends AbstractController
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
             //set manuellement la date du jour
             // $serie->setDateCreated(new \DateTime());
+
+            //upload photo
+            /**
+             * @var UploadedFile $file
+             */
+           $file = $serieForm->get('poster')->getData();
+           //renommer photo uniid =nombre aleatoire  annotation + guess = recup extension
+           $newFileName = $serie->getName()."-".uniqid().".".$file->guessExtension();
+
+           //déplacer le fichier dans public et renommer
+            //move 2 parametres le repertoire et le new name
+            $file->move('img/posters/series' , $newFileName);
+
+            //sauvegarde fichier en BDD
+            $serie->setPoster($newFileName);
 
             //rentre en bdd la nouvelle serie
             $serieRepository->save($serie, true);

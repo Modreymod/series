@@ -72,10 +72,11 @@ class Serie
     private ?\DateTimeInterface $dateCreated = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Assert\NotBlank(message: "Please provide a date !")]
     private ?\DateTimeInterface $dateModified = null;
 
-    #[ORM\OneToMany(mappedBy: 'serie', targetEntity: Season::class)]
+//persist permet de persister automatiquement les saisons de la serie
+//EAGER fait directement le chargement de toutes les données donc il fait un leftjoin auto, par contre meme si pas besoin
+    #[ORM\OneToMany(mappedBy: 'serie', targetEntity: Season::class, cascade: ["remove","persist"])]
     private Collection $seasons;
 
     public function __construct()
