@@ -4,7 +4,7 @@ body {
     background-position: center center;
     background-size: cover;
     color: #EEE;
-    font-family: 'Londrina Solid', serif;
+    font-family: 'Golos Text', serif;
 }
 
 .flex_div{
@@ -139,6 +139,10 @@ textarea{
 
 .flash-error {
     background-color: red
+}
+
+.flash-warning {
+    background-color: orangered;
 }
 
 /************************** Module 7 Relations *****************************************/

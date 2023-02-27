@@ -32,7 +32,7 @@ class SerieController extends AbstractController
 
         //recup nbr de series dans ma table
         $nbSerieMax = $serieRepository->count([]);
-        $maxPage = ceil($nbSerieMax/SerieRepository::SERIE_LIMIT);
+        $maxPage = ceil($nbSerieMax / SerieRepository::SERIE_LIMIT);
         if ($page >= 1 && $page <= $maxPage) {
             $series = $serieRepository->findBestSeries($page);
         } else {
@@ -90,6 +90,25 @@ class SerieController extends AbstractController
         //TODO Créer formulaire d'ajout de serie
         return $this->render('serie/add.html.twig',
             ['serieForm' => $serieForm->createView()]);
+
+    }
+
+    //Méthode pour supprimer la série
+    #[Route('/remove/{id}', name: 'remove')]
+    public function remove(int $id, SerieRepository $serieRepository)
+    {
+        //recupere l'objet serie
+        $serie = $serieRepository->find($id);
+
+        if ($serie) {
+            //Je la supprime
+            $serieRepository->remove($serie, true);
+            $this->addFlash("warning", "Serie deleted !");
+        } else {
+            throw $this->createNotFoundException("This serie can't be deleted !");
+        }
+        return $this->redirectToRoute('serie_list');
+
 
     }
 
