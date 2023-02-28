@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SerieType extends AbstractType
@@ -56,9 +57,14 @@ class SerieType extends AbstractType
             ->add('backdrop')
             ->add('poster', FileType::class, [
                 //ajouter champs dans dans formulaire qui ne sont pas dans l'entité
+                //path du fichier temporaire
                 'mapped' =>false,
                 'constraints' =>[
-                    new MimeTypes()
+                    new Image([
+                        "maxSize"=>'7000k',
+                        "mimeTypesMessage" => "Image format not allowed !",
+
+                    ])
                 ]
 
             ])
