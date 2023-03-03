@@ -41,7 +41,6 @@ class SerieController extends AbstractController
         } else {
             throw $this->createNotFoundException("Oops ! Page not found !");
         }
-        dump($series);
         return $this->render('serie/list.html.twig', ['series' => $series, 'currentPage' => $page, 'maxPage' => $maxPage]);
 
 
